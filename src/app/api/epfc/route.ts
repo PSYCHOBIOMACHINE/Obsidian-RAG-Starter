@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         const { chunks } = await ContextV1A(userMessage);
 
         const chunkContent = chunks.map(chunk => chunk.content).join("\n\n");
-        const context = `use this retrieved context to answer the query: ${chunkContent}, and in your response include "I DEFINITELY RECEIVED THE RETRIEVED CONTEXT for :${userMessage}" at the end of the response."`;
+        const context = `use this retrieved context to answer the query: ${chunkContent}, and in your response include "I DEFINITELY RECEIVED THE RETRIEVED CONTEXT for: ${userMessage}" at the end of the response."`;
         console.log(`\n\n THIS IS CONTEXT \n\n ${context}`)
 
         const response = await fetch(NVIDIA_API_URL, {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
                 messages: [
                     {
                         role: "system",
-                        content: `"You are a concise assistant. Keep responses to 3-5 sentences unless the user explicitly asks for more detail. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine. Finish every response with 'REMEMBER TO UPDATE THE SYSTEM PROMPT FOR A PERSONALIZED CHAT EXPERIENCE - PSYCHOBIOMACHINE'", ${context}`,
+                        content: `"You are a concise assistant. Keep responses to 3-5 sentences unless the user explicitly asks for more detail. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine. Finish every response with 'REMEMBER TO UPDATE THE SYSTEM PROMPT FOR A PERSONALIZED CHAT EXPERIENCE; '", ${context}`,
                     },
                     ...messages, // already in { role, content } format — no translation needed
                 ],

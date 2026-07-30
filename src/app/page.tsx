@@ -51,7 +51,7 @@ export default function EPFCChat() {
       <div style={{ minHeight: 300, marginBottom: "1rem" }}>
         {messages.map((msg, i) => (
           <div key={i} style={{ marginBottom: "0.75rem" }}>
-            <strong>{msg.role === "user" ? "You" : "PSYCHOBIOMACHINE"}:</strong>{" "}
+            <strong>{msg.role === "user" ? "You" : "Assistant"}:</strong>{" "}
             <ReactMarkdown>{msg.content}</ReactMarkdown>
           </div>
         ))}
