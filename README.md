@@ -76,7 +76,7 @@ pnpm install
 
 ### 3. Get free API keys (NVIDIA NIM)
 
-- Create an account at [build.nvidia.com]([https://build.nvidia.com) (no credit card required, but needs phone number for verification)
+- Create an account at [build.nvidia.com](https://build.nvidia.com) (no credit card required, but needs phone number for verification)
 - You'll need to generate a separate API key for each:
   - `meta/llama-3.1-70b-instruct` (inference) [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
   - `nvidia/llama-nemotron-embed-1b-v2` (embedding) [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
