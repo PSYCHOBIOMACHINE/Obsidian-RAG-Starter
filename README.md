@@ -15,7 +15,7 @@ Future versions of this project will involve sophisticated working memory and lo
 2. Supabase PostgreSQL + pgvector (Relational DB with Vector Embeddings)
 3. NVIDIA NIM/meta/llama-3.1-70b-instruct (Open-AI compatable inference API)
 4. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model)
-5. @Huggingface/transformers (tokenizer for the embedding model
+5. @Huggingface/transformers (tokenizer for the embedding model)
 
 ## Models
 ### Inference — meta/llama-3.1-70b-instruct (NVIDIA NIM) 
