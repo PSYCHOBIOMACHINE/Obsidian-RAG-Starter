@@ -1,6 +1,6 @@
 # Obsidian-RAG Starter (Naïve; text only)
 
-A RAG chat interface for querying your Obsidian vault — Next.js, Supabase/pgvector, NVIDIA NIM (meta/llama-3.1-70b-instruct, nvidia/llama-nemotron-embed-1b-v2).
+*A RAG chat interface for querying your Obsidian vault — Next.js, Supabase/pgvector, NVIDIA NIM (meta/llama-3.1-70b-instruct, nvidia/llama-nemotron-embed-1b-v2).*
 
 
 ![Designing RAG Pipeline](docs/images/ragprojectbanner.jpg)
