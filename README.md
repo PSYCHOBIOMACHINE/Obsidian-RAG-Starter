@@ -226,7 +226,9 @@ Licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) â
 
 ![Substack screenshot: METAPLASTICITY by PSYCHOBIOMACHINE](docs/images/substackscreenshot.png)
 
-This project started as an attempt to build a chatbot using free APIs. When that turned out to be easy, I tried to add my Obsidian vault of papers and notes to the app and quickly learned that you can't just toss it into the project files. I turned my learning experience into a Substack series in which I build out each step and explain the concepts I learn along the way such as retrieval augmented generation, vector embedding, chunking, etc. I also briefly discuss parallels between RAG and human memory retrieval, as well as my goals to build a chat app the effectively mirrors the human neurocognitive system. You can check it out here if interested:
+This project started as an attempt to build a chatbot using free APIs. When that turned out to be easy, I tried to add my Obsidian vault of papers and notes to the app and quickly learned that you can't just toss it into the project files. I turned my learning experience into a Substack series in which I build out each step and explain the concepts I learn along the way such as retrieval augmented generation, vector embedding, chunking, etc. I also briefly discuss parallels between RAG and human memory retrieval, as well as my goals to build a chat app the effectively mirrors the human neurocognitive system. 
+
+You can check it out here if interested:
 [METAPLASTICITY by PSYCHOBIOMACHINE](https://psychobiomachine.substack.com/)
 
 <div align="center">
