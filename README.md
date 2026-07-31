@@ -21,7 +21,7 @@ Future versions of this project will involve sophisticated working memory and lo
 ### Inference — meta/llama-3.1-70b-instruct (NVIDIA NIM) 
 Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, and API key in `route.ts` — no other code changes needed. Free API key: [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
 ### Embedding — nvidia/llama-nemotron-embed-1b-v2 (NVIDIA NIM)
-Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
+Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 
 Note: the inference models are kind of slow from this provider. But there are zero rate limits beyond (40 requests per minute) which makes it a comfortable tool for prototyping.
@@ -70,15 +70,16 @@ pnpm install
 - Add a read-only RLS policy allowing `select` on `vault_chunks` for the
   `anon` role — the Supabase dashboard's default "Enable read access for
   all users" policy template covers this. Without it, `match_chunks` will
-  silently return no results at query time even though the data exists.
+  silently return no results at query time even though the data exists. 
+- For convenience, I added the RLS policy to the schema at `supabase/schema.sql`. If you ran the contents in the SQL editor then you should already have it.
 - Note: switching embedding models might require regenerating the table and RPC function with correct vector dimensions. Current is 2048.
 
 ### 3. Get free API keys (NVIDIA NIM)
 
-- Create an account at build.nvidia.com (no credit card required, but needs phone number for verification)
+- Create an account at [build.nvidia.com]([https://build.nvidia.com) (no credit card required, but needs phone number for verification)
 - You'll need to generate a separate API key for each:
   - `meta/llama-3.1-70b-instruct` (inference) [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
-  - `nvidia/llama-nemotron-embed-1b-v2` (embedding) [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
+  - `nvidia/llama-nemotron-embed-1b-v2` (embedding) [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 ### 4. Configure environment variables
 
