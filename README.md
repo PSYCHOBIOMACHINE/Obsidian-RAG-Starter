@@ -24,7 +24,7 @@ Uses the OpenAI-compatible chat completions format, so swapping to any other Ope
 Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 
-Note: the inference models are kind of slow from this provider. But there are zero rate limits beyond (40 requests per minute) which makes it a comfortable tool for prototyping.
+Note: the inference models are kind of slow from this provider. But there are zero rate limits beyond 40 requests per minute which makes it a comfortable tool for prototyping.
 
 ## Memory
 This project models memory loosely after human cognitive architecture — working memory, episodic memory, semantic memory, and procedural memory — rather than treating "memory" as a single undifferentiated feature. Future work in this area will draw on both frontier-model memory strategies and neurocognitive literature on how humans track conversational state.
