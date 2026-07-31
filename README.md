@@ -21,7 +21,7 @@ Future versions of this project will involve sophisticated working memory and lo
 ### Inference — meta/llama-3.1-70b-instruct (NVIDIA NIM) 
 Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, and API key in `route.ts` — no other code changes needed. Free API key: [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
 ### Embedding — nvidia/llama-nemotron-embed-1b-v2 (NVIDIA NIM)
-Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard))
+Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 
 Note: the inference models are kind of slow from this provider. But there are zero rate limits beyond (40 requests per minute) which makes it a comfortable tool for prototyping.
@@ -78,7 +78,7 @@ pnpm install
 - Create an account at build.nvidia.com (no credit card required, but needs phone number for verification)
 - You'll need to generate a separate API key for each:
   - `meta/llama-3.1-70b-instruct` (inference) [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
-  - `nvidia/llama-nemotron-embed-1b-v2` (embedding) [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard))
+  - `nvidia/llama-nemotron-embed-1b-v2` (embedding) [llama-nemotron-embed-1b-v2]([https://build.nvidia.com](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 ### 4. Configure environment variables
 
@@ -220,3 +220,12 @@ ingest design.
 ## License
 
 Licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — free to use and modify for non-commercial purposes, with attribution. Commercial use requires permission.
+
+## METAPLASTICITY by PSYCHOBIOMACHINE
+
+![Substack screenshot: METAPLASTICITY by PSYCHOBIOMACHINE](docs/images/substackscreenshot.png)
+
+This project started as an attempt to build a chatbot using free APIs. When that turned out to be easy, I tried to add my Obsidian vault of papers and notes to the app and quickly learned that that's not how it works. I turned my learning experience into a Substack series in which I build out each step and explain the concepts I learn along the way such as retrieval augmented geeration, vector embedding, chunking, etc. I also briefly discuss parallels between RAG and human memory retrieval, as well as my goals to build a chat app the effectively mirrors the human neurocognitive system. You can check it out here if interested:
+[METAPLASTICITY by PSYCHOBIOMACHINE](https://psychobiomachine.substack.com/)
+
+#💎🌌🐉
