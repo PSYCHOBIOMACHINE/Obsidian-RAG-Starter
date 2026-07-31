@@ -64,7 +64,7 @@ pnpm install
 
 ### 2. Set up Supabase
 
-- Create a free Supabase project at supabase.com
+- Create a free Supabase project at [supabase.com](https://supabase.com/)
 - Open the SQL editor and run the contents of `supabase/schema.sql`
   (creates the `vault_chunks` table and the `match_chunks` RPC function which depends on the table).
 - Add a read-only RLS policy allowing `select` on `vault_chunks` for the
