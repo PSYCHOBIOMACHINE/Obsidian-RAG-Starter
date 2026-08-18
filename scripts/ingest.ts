@@ -35,7 +35,8 @@ const supabase = createClient(
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 // absolute path to obsidian vault on machine, or path to pulled vault in project root. I realized you can skip github entirely
-const VAULT_DIR         = path.resolve('./your-path-to-vault-here')
+// const VAULT_DIR      = path.resolve('./your-path-to-vault-here')
+const VAULT_DIR         = path.resolve(process.env.VAULT_PATH!)
 const EMBED_MODEL       = 'nvidia/llama-nemotron-embed-1b-v2'
 const EMBED_URL         = 'https://integrate.api.nvidia.com/v1/embeddings'
 
