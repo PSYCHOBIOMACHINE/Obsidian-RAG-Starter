@@ -3,9 +3,10 @@
 import ContextV1A from "@/lib/contextv1a";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown"
+import { useWorkingMemoryStore } from "@/lib/zustand/workingMemoryStore";
 
 // Each message in the conversation has a role and text content
-type Message = {
+export type Message = {
   role: "user" | "assistant";
   content: string;
 };
@@ -14,6 +15,9 @@ export default function EPFCChat() {
   const [messages, setMessages] = useState<Message[]>([]); // all messages, both user and model
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const memory = useWorkingMemoryStore(($) => $.memory);
+  const findMemoryDelta = useWorkingMemoryStore(($) => $.findMemoryDelta);
 
   async function sendMessage() {
     if (!input.trim()) return;
@@ -41,6 +45,8 @@ export default function EPFCChat() {
     };
     setMessages((prev) => [...prev, assistantMessage]);
     setLoading(false);
+
+    findMemoryDelta(messages) // runs llm call, updates working memory store
   }
 
   return (
