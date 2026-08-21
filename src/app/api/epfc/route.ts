@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 // --- NVIDIA NIM ---
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 
+// previous model: "meta/llama-3.1-70b-instruct"
 
 export async function POST(req: NextRequest) {
 
@@ -29,10 +30,10 @@ export async function POST(req: NextRequest) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${process.env.NVIDIA_META_LLAMA3_70B_API_KEY!}`,
+                "Authorization": `Bearer ${process.env.NVIDIA_NEMOTRON_3_ULTRA_API_KEY!}`,
             },
             body: JSON.stringify({
-                model: "meta/llama-3.1-70b-instruct",
+                model: "nvidia/nemotron-3-ultra-550b-a55b",
                 messages: [
                     {
                         role: "system",

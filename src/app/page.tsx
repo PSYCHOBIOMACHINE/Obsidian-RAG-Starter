@@ -24,6 +24,8 @@ export default function EPFCChat() {
 
     // Add the user's message to the visible chat immediately
     const userMessage: Message = { role: "user", content: input };
+    const messagesWithUser = [...messages, userMessage];
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -32,7 +34,10 @@ export default function EPFCChat() {
     const res = await fetch("/api/epfc", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [...messages, userMessage] }), // this makes me think the last two items in this array are 'userMessage'. setMessages is called appending userMessage, and then the fetch request adds another copy of userMessage to the array
+      body: JSON.stringify({ 
+        workingMemory: [memory.userInfo, memory.goals, memory.topics], // added this 
+        messages: [...messages, userMessage] 
+      }), // this makes me think the last two items in this array are 'userMessage'. setMessages is called appending userMessage, and then the fetch request adds another copy of userMessage to the array
     });
 
     const data = await res.json();
@@ -43,10 +48,11 @@ export default function EPFCChat() {
       role: "assistant",
       content: data.reply ?? "Something went wrong.",
     };
-    setMessages((prev) => [...prev, assistantMessage]);
+    const finalMessages = [...messagesWithUser, assistantMessage];
+    setMessages(finalMessages);
     setLoading(false);
 
-    findMemoryDelta(messages) // runs llm call, updates working memory store
+    findMemoryDelta(finalMessages) // runs llm call, updates working memory store
   }
 
   return (

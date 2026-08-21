@@ -4,13 +4,30 @@ interface WorkingMemoryData{
 	goals: string[]; 
 	topics: string[] 
 } 
-interface WorkingMemoryDiff {
+export interface WorkingMemoryDelta {
   userInfo?: Record<string, unknown>;  // shallow-merged into this.userInfo
   addGoals?: string[];                 // new goals to append (deduped)
-  removeGoals?: string[];              // goals to drop (task completed / abandoned)
+//   removeGoals?: string[];              // goals to drop (task completed / abandoned)
   addTopics?: string[];                // brand-new topics
   reinforceTopics?: string[];          // existing topics mentioned again this turn
+  reinforceGoals?: string[];           // existing goals mentioned again this turn
+
+  // TODO: leaving removeGoals for later to be implemented together with a completed gaols property.
+  // considering dropping topics/goals after a certain number, but I dont really like the idea of doing this.
+  // STRONGLY CONSIDERING: a motivation/ affect property with instructions on how to proceed. could be a simple feature like mood valence -1 to 1, magnitude 0 to 10
 }
+
+export const workingMemoryDeltaSchema = {
+  type: "object",
+  properties: {
+    userInfo: { type: "object" },
+    addGoals: { type: "array", items: { type: "string" } },
+    addTopics: { type: "array", items: { type: "string" } },
+    reinforceTopics: { type: "array", items: { type: "string" } },
+    reinforceGoals: { type: "array", items: { type: "string" } },
+  },
+}; // this object is passed as guided_json constraints so that the LLM returns this data shape
+
 export class WorkingMemory { 
 	userInfo: Record<string, unknown>; 
 	goals: string[]; 
@@ -20,31 +37,44 @@ export class WorkingMemory {
 		this.userInfo = userInfo; 
 		this.goals = goals; 
 		this.topics = topics; 
-	} 
+	}
 
     //still need methods for updating values 
     // - adding diffs to values, 
-    applyDiff(diff: WorkingMemoryDiff): void {
-        if (diff.userInfo) {
-            this.userInfo = { ...this.userInfo, ...diff.userInfo };
+    applyDelta(delta: WorkingMemoryDelta): void {
+        if (delta.userInfo) {
+            this.userInfo = { ...this.userInfo, ...delta.userInfo };
         }
-        if (diff.removeGoals?.length) {
-            this.goals = this.goals.filter(g => !diff.removeGoals!.includes(g));
-        }
-        if (diff.addGoals?.length) {
-            const newOnes = diff.addGoals.filter(g => !this.goals.includes(g));
+        // if (delta.removeGoals?.length) {
+        //     this.goals = this.goals.filter(g => !delta.removeGoals!.includes(g));
+        // }
+        if (delta.addGoals?.length) {
+            const newOnes = delta.addGoals.filter(g => !this.goals.includes(g));
             this.goals.unshift(...newOnes);   // new goals start at the front
         }
-        if (diff.addTopics?.length) {
-            const newOnes = diff.addTopics.filter(t => !this.topics.includes(t));
+        if (delta.addTopics?.length) {
+            const newOnes = delta.addTopics.filter(t => !this.topics.includes(t));
             this.topics.unshift(...newOnes);
         }
-        if (diff.reinforceTopics?.length) {
-            this.reinforceTopics(diff.reinforceTopics);
+        if (delta.reinforceGoals?.length) {
+            this.reRankGoals(delta.reinforceGoals);
+        }
+        if (delta.reinforceTopics?.length) {
+            this.reRankTopics(delta.reinforceTopics);
         }
     }
     // - reranking the arrays so recent items are indexed sooner/lower 
-    reinforceTopics(mentioned: string[]): void {
+    reRankGoals(mentioned: string[]): void {
+        for (const goal of mentioned) {
+            const idx = this.goals.indexOf(goal);
+            if (idx > 0) {                          // already at 0 → nothing to do
+                this.goals.splice(idx, 1);           // remove from old position
+                this.goals.unshift(goal);           // move to front
+        }
+    }
+    }
+    
+    reRankTopics(mentioned: string[]): void {
         for (const topic of mentioned) {
             const idx = this.topics.indexOf(topic);
             if (idx > 0) {                          // already at 0 → nothing to do
@@ -53,6 +83,7 @@ export class WorkingMemory {
         }
     }
     }
+
     
 	toJSON(): WorkingMemoryData { 
 	return {userInfo: this.userInfo, topics: this.topics, goals: this.goals}; } 

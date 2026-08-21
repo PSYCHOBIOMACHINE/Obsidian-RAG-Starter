@@ -24,20 +24,22 @@ export const useWorkingMemoryStore = create<WorkingMemoryStore>()(
       },
 
       // async — fetches, then delegates to applyMemorydelta
-      findMemoryDelta: async (recentMessages) => {
+      findMemoryDelta: async (finalMessages) => {
         set({ isUpdatingMemory: true });
         try {
           const bgRes = await fetch('/api/wm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              snapshot: get().memory.toJSON(),
-              recentMessages,
+              WMSnapshot: get().memory.toJSON(),
+              messages: finalMessages,
             }),
           });
           if (!bgRes.ok) throw new Error(`memory-update failed: ${bgRes.status}`);
+
           const delta: WorkingMemoryDelta = await bgRes.json();
           get().applyMemoryDelta(delta);
+
         } catch (err) {
           console.error('Memory update failed:', err);
           // deliberately no set() here — bad fetch shouldn't corrupt existing memory
@@ -59,3 +61,5 @@ export const useWorkingMemoryStore = create<WorkingMemoryStore>()(
 
 //persisted -> whatever is pulled from localStorage, 
 // current -> fresh initial state store creater function produced
+
+// TODO : consolidate like topics and goals at least on rehydration from local storage -> one densely worded topic or goal to combine related topics and goals
