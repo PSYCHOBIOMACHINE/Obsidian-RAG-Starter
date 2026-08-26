@@ -1,6 +1,6 @@
 # Obsidian-RAG Starter (Naïve; text only)
 
-*A RAG chat interface for querying your Obsidian vault — Next.js, Supabase/pgvector, NVIDIA NIM (meta/llama-3.1-70b-instruct, nvidia/llama-nemotron-embed-1b-v2).*
+*A RAG chat interface for querying your Obsidian vault — Next.js, Supabase/pgvector, NVIDIA NIM (NVIDIA/nemotron-3-ultra-550b-a55, NVIDIA/nemotron-3.5-lightning-30b-a3b, nvidia/llama-nemotron-embed-1b-v2).*
 
 
 ![Designing RAG Pipeline](docs/images/ragprojectbanner.jpg)
@@ -9,7 +9,7 @@ Obsidian-RAG Starter turns a personal Obsidian vault — markdown notes, canvas 
 
 This project was designed to operate at zero-cost using free-tier tools. This version is 'naïve' because it completes the most basic query-context retrieval operation. Modern RAG applications apply more sophisticated context engineering strategies.
 
-Future versions of this project will continue to sophisticate the working memory, long-term memory, ingestion and retrieval strategies. They will also aim to implement multimedia document ingesting, web search, add simple agentic capabilities for UI manipulation--hoping to create a an agentic tool that supports apps that are functionally more than just a chat app.
+Future versions of this project will continue to sophisticate the working memory, long-term memory, ingestion and retrieval strategies. They will also aim to implement multimedia document ingesting, web search, and add simple agentic capabilities for UI manipulation--hoping to create an agentic tool that supports apps that are functionally more than just a chat app.
 
 Note: The RAG portions are commented out at this time. The embedding model being used is deprecated and I need to select the next one with the same dimensions and that has an available tokenizer. Aside from the model, the retrieval process silently fails in production so context never gets retrieved for a deployed app.
 
@@ -23,26 +23,33 @@ Note: The RAG portions are commented out at this time. The embedding model being
 
 ## Models
 ### Main Inference — NVIDIA/nemotron-3-ultra-550b-a55 (NVIDIA NIM) 
-Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens) Free API key: [NVIDIA/nemotron-3-ultra-550b-a55](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b)
-### Background Inference - NVIDIA/nemotron-3.5-lightning-30b-a3b
-Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. Free API key: [NVIDIA/nemotron-3.5-lightning-30b-a3b](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)
+Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens) 
+Free API key: [NVIDIA/nemotron-3-ultra-550b-a55](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b)
+### Background Inference - NVIDIA/nemotron-3.5-lightning-30b-a3b (NVIDIA NIM)
+Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens)
+Free API key: [NVIDIA/nemotron-3.5-lightning-30b-a3b](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)
 ### Embedding — nvidia/llama-nemotron-embed-1b-v2 (NVIDIA NIM)
-Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
+Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. 
+Free API key: [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
-Note: There are zero rate limits beyond 40 requests per minute for NVIDIAs free NIM models which makes it a comfortable tool for prototyping. However, the free tier is limited to prototyping. Commercial use will require a commercial license from NVIDIA. The Open-AI compatible format of these APIs makes it easy to swap for most models and providers in the industry, so this app is not limited to the NVIDIA NIM catalog.
+Note: There are zero rate limits beyond 40 requests per minute for NVIDIAs free NIM models which makes it a comfortable tool for prototyping. However, the free tier is limited to prototyping. Commercial use will require a commercial license from NVIDIA. The Open-AI compatible format of these APIs makes it easy to swap for most models/providers in the industry so this app is not limited to the NVIDIA NIM catalog.
 
 ## Memory
 This project models memory loosely after human cognitive architecture — working memory, episodic memory, semantic memory, and procedural memory — rather than treating "memory" as a single undifferentiated feature. Future work in this area will draw on both frontier-model memory strategies and neurocognitive literature on how humans track conversational state.
 ### Working Memory
-**Current working memory approach:** App now contains a persistent, self-updating object that extracts user info, topics, and goals accross sessions. A `WorkingMemory` class (/lib/workingMemory.ts) owns the data shape and merge/domain logic. A Zustand store (/lib/stores/workingMemoryStore.ts) instantiates the class once on module load, orchestrates fetch/update, and persists to local storage via Zustand middleware. 
+**Current working memory approach:** 
+App now contains a persistent, self-updating object that extracts user info, topics, and goals accross sessions. A `WorkingMemory` class (/lib/workingMemory.ts) owns the data shape and merge/domain logic. A Zustand store (/lib/stores/workingMemoryStore.ts) instantiates the class once on module load, orchestrates fetch/update, and persists to local storage via Zustand middleware. 
 
-**How updating works** After main inference response, a separate background route (/api/wm/route.ts) passes the messages history and working memory object to a low-param,structured-output specialized LLM to extract diffs for updating and reranking and returns a JSON object. A zustand hook awaits this JSON object and applies methods to update working memory. Reranking methods 
+**How updating works:** 
+After main inference response, a separate background route (/api/wm/route.ts) passes the messages history and working memory object to a low-param,structured-output specialized LLM to extract diffs for updating and reranking and returns a JSON object. A zustand hook awaits this JSON object and applies methods to update working memory. Reranking methods 
 
-**How it's used** The main inference receives a the working memory object and a prompt describing how to use each value. The goals are to establish users theory of mind and keep the conversation personalized, inline with the users goals, and to seek connectivity between all topics.
+**How it's used:** 
+The main inference receives a the working memory object and a prompt describing how to use each value. The goals are to establish users theory of mind and keep the conversation personalized, inline with the users goals, and to seek connectivity between all topics.
 
 In addition, the entire session history is passed to the model on every request, alongside the full retrieved RAG context block, and working memory store, all injected into the system prompt. There's no summarization or compression — every prior turn and every retrieval accumulates in the context window for the life of the conversation. NVIDIA models have a 1M inbound token limit so it's not a problem in the short-term. The solution might just be to allow separate conversation threads.
 
-**Future direction:** Considering adding more properties to the working memory abstraction such as short term and long term goals, preferences, inferred affective style, neural signatures etc... Also considering how much of the conversation needs to be passed, or if more sophisticated retrieval techniques can be integrated/layered without compromising performance.
+**Future direction:** 
+Considering adding more properties to the working memory abstraction such as short term and long term goals, preferences, inferred affective style, neural signatures etc... Also considering how much of the conversation needs to be passed, or if more sophisticated retrieval techniques can be integrated/layered without compromising performance.
 
 In addition, the current object and store configuration (bg returning a JSON object which includes properties that get automatically passed to object methods) sets the stage for simple agentic tasks such as UI manipulation. The operation is a little slow for tasks like "change system theme", but might be great for "generate this 3D model using prebuilt components".
 
@@ -53,12 +60,13 @@ I managed to accidentally create a similar memory system as lead frontier models
 - Sometimes the api call fails and I'm unsure if it's an issue on NVIDIA's end or if my system-prompts create edge cases that break the LLM. Similar failures occur with the main inference so it's likely sometimes a network issue.
 - No guarantee that the model will return a JSON object or reasonable information within it. There were cases where I wrote something that was surely going to result in adding or reranking the topics/goals and it didnt.
 
-**Kind of funny**: While tweaking the bg inference model, I console.log'd its reasoning process. Logging the reasoning process streamed a human-like inner monologue which often revealed signs of immense stress. Sometimes it produced thousands of random characters before erroring out. Maybe it's not a model after all, and instead it's just one over-extended guy...
+**Kind of funny**: 
+While tweaking the bg inference model, I console.log'd its reasoning process. Logging the reasoning process streamed a human-like inner monologue which often revealed signs of immense stress. Sometimes it produced thousands of random characters before erroring out. Maybe it's not a model after all, and instead it's just one over-extended guy...
 
 ### Long-Term Memory
 **Declarative/ Episodic Memory:** No instance of long-term episodic memory exists yet. Conversations don't get saved nor used as context in other conversations.
 
-**Declarative/ Semantic Memory**: PostgreSQL with the pgvector extension allows the Obsidian vault files to become the apps semantic memory. Aside from raw vector embeddings and content, structured metadata (type, tags, title) exists at the chunk level but isn't yet used for anything beyond storage — no tag-based retrieval, no type filtering. Working memory object in local storage offers long term persistence of user information, topics and goals collected accross conversations.
+**Declarative/ Semantic Memory**: PostgreSQL with the pgvector extension allows the Obsidian vault files to become the apps semantic memory. Aside from raw vector embeddings and content, structured metadata (type, tags, title) exists at the chunk level but isn't yet used for anything beyond storage — no tag-based retrieval, no type filtering. Working memory object in local storage offers long term persistence of user information, topics, and goals collected accross conversations.
 
 **Non-declarative/ Procedural**: Current version lacks structured reasoning beyond what the inference models initiate as their own feature. The current version also lacks skills, or agentic-task completion capabilities. 
 
