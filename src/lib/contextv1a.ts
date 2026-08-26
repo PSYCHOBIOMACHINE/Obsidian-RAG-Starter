@@ -80,7 +80,7 @@ export default async function ContextV1A(query: string): Promise<ContextResult> 
         console.error(` ?? ._. ?? \n RPC match_chunks failed: ${error.message}`)
     }
 
-    console.log(` DATA FROM RPC match_chunks: \n\n ${JSON.stringify(data, null, 2)}`)
+   // console.log(` DATA FROM RPC match_chunks: \n\n ${JSON.stringify(data, null, 2)}`)
 return { query, chunks: (data as Row[]) ?? [] }
 //return { query, chunks: data ?? [] }
 

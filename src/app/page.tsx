@@ -17,6 +17,9 @@ export default function EPFCChat() {
   const [loading, setLoading] = useState(false);
 
   const memory = useWorkingMemoryStore(($) => $.memory);
+  const userInfo = useWorkingMemoryStore(($) => $.memory.userInfo);
+  const goals = useWorkingMemoryStore(($) => $.memory.goals);
+  const topics = useWorkingMemoryStore(($) => $.memory.topics);
   const findMemoryDelta = useWorkingMemoryStore(($) => $.findMemoryDelta);
 
   async function sendMessage() {
@@ -30,12 +33,14 @@ export default function EPFCChat() {
     setInput("");
     setLoading(true);
 
+    console.log("CLIENT — raw store values:", userInfo, goals, topics);
+    console.log("CLIENT — outgoing body:", JSON.stringify({ workingMemory: { userInfo, goals, topics }, messages: [...messages, userMessage] }));
     // POST to our route.ts API — the route handles the actual NVIDIA call
     const res = await fetch("/api/epfc", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
-        workingMemory: [memory.userInfo, memory.goals, memory.topics], // added this 
+        workingMemory: { userInfo: userInfo, goals: goals, topics: topics }, // added this 
         messages: [...messages, userMessage] 
       }), // this makes me think the last two items in this array are 'userMessage'. setMessages is called appending userMessage, and then the fetch request adds another copy of userMessage to the array
     });

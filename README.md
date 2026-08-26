@@ -13,18 +13,21 @@ Future versions of this project will involve sophisticated working memory and lo
 ## Stack/Technologies
 1. Next.js (interface/full-stack framework)
 2. Supabase PostgreSQL + pgvector (Relational DB with Vector Embeddings)
-3. NVIDIA NIM/meta/llama-3.1-70b-instruct (Open-AI compatable inference API)
-4. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model)
-5. @Huggingface/transformers (tokenizer for the embedding model)
+3. NVIDIA/nemotron-3-ultra-550b-a55 (Open-AI compatable inference API; Main inference)
+4. NVIDIA/nemotron-3.5-lightning-30b-a3b (Working memory updating background inference)
+5. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model) -- deprecated, use something else 2048 dimensions; must re-ingest
+6. @Huggingface/transformers (tokenizer for the embedding model)
 
 ## Models
-### Inference — meta/llama-3.1-70b-instruct (NVIDIA NIM) 
-Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, and API key in `route.ts` — no other code changes needed. Free API key: [meta/llama-3.1-70b-instruct](https://build.nvidia.com/meta/llama-3_1-70b-instruct)
+### Main Inference — NVIDIA/nemotron-3-ultra-550b-a55 (NVIDIA NIM) 
+Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens) Free API key: [NVIDIA/nemotron-3-ultra-550b-a55](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b)
+### Background Inference - NVIDIA/nemotron-3.5-lightning-30b-a3b
+Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, and API key in `route.ts` — no other code changes needed. Free API key: [NVIDIA/nemotron-3.5-lightning-30b-a3b](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)
 ### Embedding — nvidia/llama-nemotron-embed-1b-v2 (NVIDIA NIM)
 Also OpenAI-compatible. Requires `input_type: "passage"` at ingest time and `input_type: "query"` at query time — this is model-specific behavior, not a general OpenAI-compatible requirement. Free API key: [llama-nemotron-embed-1b-v2](https://build.nvidia.com/nvidia/llama-nemotron-embed-1b-v2/modelcard)
 
 
-Note: the inference models are kind of slow from this provider. But there are zero rate limits beyond 40 requests per minute which makes it a comfortable tool for prototyping.
+Note: the inference models can sometimes be slow from this provider. But there are zero rate limits beyond 40 requests per minute which makes it a comfortable tool for prototyping.
 
 ## Memory
 This project models memory loosely after human cognitive architecture — working memory, episodic memory, semantic memory, and procedural memory — rather than treating "memory" as a single undifferentiated feature. Future work in this area will draw on both frontier-model memory strategies and neurocognitive literature on how humans track conversational state.
@@ -89,7 +92,8 @@ Create `.env.local` in the project root:
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 SUPABASE_SECRET_KEY=your-supabase-service-role-key
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-NVIDIA_META_LLAMA3_70B_API_KEY=your-inference-key
+NVIDIA_NEMOTRON_LIGHTNING_3-5_API_KEY=your-inference-key
+NVIDIA_NEMOTRON_ULTRA_API_KEY=your-inference-key
 NVIDIA_EMBED_API_KEY=your-embedding-key
 ```
 
