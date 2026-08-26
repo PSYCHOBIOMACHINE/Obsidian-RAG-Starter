@@ -45,7 +45,7 @@ Technically, this working memory system is like a bridge between the transient s
 After main inference response, a separate background route (`/api/wm/route.ts`) passes the messages history and working memory object to a low-param, structured-output specialized LLM to extract deltas (`∆`) for updating and reranking, and returns a JSON object. A zustand hook awaits this JSON object and applies methods to update working memory. Reranking methods splice goals and topics from their current index and moves them to index[0] to organize these lists by recent relevance.
 
 **How it's used:** 
-The main inference receives a the working memory object and a prompt describing how to use each value. The goals are to establish users theory of mind and keep the conversation personalized, inline with the users goals, and to seek connectivity between all topics.
+The main inference receives a the working memory object and a prompt describing how to use each value. The goals/topics are to establish users theory of mind, personalize the conversation, keep responses inline with the users goals, and to seek connectivity between all topics.
 
 In addition, the entire session history is passed to the model on every request, alongside the full retrieved RAG context block, and working memory store, all injected into the system prompt. There's no summarization or compression — every prior turn and every retrieval accumulates in the context window for the life of the conversation. NVIDIA models have a 1M inbound token limit so it's not a problem in the short-term. The solution might just be to allow separate conversation threads.
 
