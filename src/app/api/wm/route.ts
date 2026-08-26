@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
                             3. new topics → add each to an \`addTopics\` string array.
                         5. Only include the fields you actually have content for (\`userInfo\`, \`addGoals\`, \`addTopics\`, \`reinforceGoals\`, \`reinforceTopics\`) — never restate \`userInfo\`, \`goals\`, or \`topics\` from CURRENT STATE. If none of those fields have anything to report, output exactly \`{}\`.
 
-                        Additional Output rules
+                        Output format CRITICAL:
                         - Return ONLY a raw JSON object. No markdown, no headers, no bullet points, no explanation text, no code fences. Your entire response must start with { and end with }.`,
                         //instructions for the model to follow, including the non-negotiable structure of the return statement
                     },

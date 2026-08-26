@@ -61,7 +61,7 @@ export default function EPFCChat() {
   }
 
   return (
-    <div style={{ maxWidth: 640, maxHeight: 700, margin: "0 auto", padding: "2rem", overflowY: "auto" }}>
+    <div style={{ maxWidth: 640, maxHeight: 700, margin: "0 0", padding: "2rem", overflowY: "auto" }}>
       <h1>EPFC Chat</h1>
 
       {/* Chat history */}
