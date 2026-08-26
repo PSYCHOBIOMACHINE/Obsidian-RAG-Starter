@@ -7,7 +7,7 @@
 
 Obsidian-RAG Starter turns a personal Obsidian vault — markdown notes, canvas boards, and PDFs — into a queryable knowledge base. It walks the vault and collects eligible file paths, parses and chunks vault content, embeds the chunks via a remote embedding model, and stores chunks and vectors in Supabase for semantic retrieval. A background process automatically collects and updates user information, goals and topics, persists them in local storage, and injects them into the main system prompt as additional context.
 
-This project was designed to operate at zero-cost using free-tier tools. This version is 'naïve' because it completes the most basic query-context retrieval operation. Modern RAG applications apply more sophisticated context engineering strategies.
+This project was designed to operate at zero-cost using free-tier tools and models. However, model API's can be easily switched out for frontier or paid options.
 
 Future versions of this project will continue to sophisticate the working memory, long-term memory, ingestion and retrieval strategies. They will also aim to implement multimedia document ingesting, web search, and add simple agentic capabilities for UI manipulation—hoping to create an agentic tool that supports apps that are functionally more than just a chat app.
 
@@ -38,10 +38,11 @@ Note: There are zero rate limits beyond 40 requests per minute for NVIDIAs free 
 This project models memory loosely after human cognitive architecture — working memory, episodic memory, semantic memory, and procedural memory — rather than treating "memory" as a single undifferentiated feature. Future work in this area will draw on both frontier-model memory strategies and neurocognitive literature on how humans track conversational state.
 ### Working Memory
 **Current working memory approach:** 
-App now contains a persistent, self-updating object that extracts user info, topics, and goals accross sessions. A `WorkingMemory` class (/lib/workingMemory.ts) owns the data shape and merge/domain logic. A Zustand store (/lib/stores/workingMemoryStore.ts) instantiates the class once on module load, orchestrates fetch/update, and persists to local storage via Zustand middleware. 
+App now contains a persistent, self-updating object that extracts user info, topics, and goals accross sessions. A `WorkingMemory` class (`/lib/workingMemory.ts`) owns the data shape and merge/domain logic. A Zustand store (`/lib/stores/workingMemoryStore.ts`) instantiates the class once on module load, orchestrates fetch/update, and persists to local storage via Zustand middleware. 
+Technically, this working memory system is like a bridge between the transient short-term/working memory and the persistent long-term memory. 
 
 **How updating works:** 
-After main inference response, a separate background route (/api/wm/route.ts) passes the messages history and working memory object to a low-param,structured-output specialized LLM to extract diffs for updating and reranking and returns a JSON object. A zustand hook awaits this JSON object and applies methods to update working memory. Reranking methods 
+After main inference response, a separate background route (`/api/wm/route.ts`) passes the messages history and working memory object to a low-param, structured-output specialized LLM to extract deltas (`∆`) for updating and reranking, and returns a JSON object. A zustand hook awaits this JSON object and applies methods to update working memory. Reranking methods splice goals and topics from their current index and moves them to index[0] to organize these lists by recent relevance.
 
 **How it's used:** 
 The main inference receives a the working memory object and a prompt describing how to use each value. The goals are to establish users theory of mind and keep the conversation personalized, inline with the users goals, and to seek connectivity between all topics.
@@ -53,18 +54,18 @@ Considering adding more properties to the working memory abstraction such as sho
 
 In addition, the current object and store configuration (bg returning a JSON object which includes properties that get automatically passed to object methods) sets the stage for simple agentic tasks such as UI manipulation. The operation is a little slow for tasks like "change system theme", but might be great for "generate this 3D model using prebuilt components".
 
-I managed to accidentally create a similar memory system as lead frontier models, leaning a little more towards modeling real working memory processes (unsure if that makes the app better atm). I plan to continue in this direction, including reverse-engineering how humans track conversations and the states of their conversational partners.
+I managed to accidentally create a similar memory system as lead frontier models, leaning a little more towards modeling real working memory processes (unsure if that makes the app better atm–but I'm glad I'm on the right track). I plan to continue in this direction, including reverse-engineering how humans track conversations and the states of their conversational partners.
 
 **Known limitations**
 - Fire-and-forget means race conditions are possible — acceptable tradeoff for single-user local use, called out explicitly rather than hidden.
 - Sometimes the api call fails and I'm unsure if it's an issue on NVIDIA's end or if my system-prompts create edge cases that break the LLM. Similar failures occur with the main inference so it's likely sometimes a network issue.
-- No guarantee that the model will return a JSON object or reasonable information within it. There were cases where I wrote something that was surely going to result in adding or reranking the topics/goals and it didnt.
+- No guarantee that the model will return a JSON object or reasonable information within it. There were cases where I was sure a query would prompt the model to add or rerank topics/goals and it didnt.
 
 **Kind of funny**: 
 While tweaking the bg inference model, I console.log'd its reasoning process. Logging the reasoning process streamed a human-like inner monologue which often revealed signs of immense stress. Sometimes it produced thousands of random characters before erroring out. Maybe it's not a model after all, and instead it's just one over-extended guy...
 
 ### Long-Term Memory
-**Declarative/ Episodic Memory:** No instance of long-term episodic memory exists yet. Conversations don't get saved nor used as context in other conversations.
+**Declarative/ Episodic Memory:** No instance of long-term episodic memory exists yet. Conversations don't get saved nor used as context in other conversations. The major problem to solve here is managing the temporal/sequential dynamics involved in learning and memory. How do you get a model to automatically know the temporal order of diverse events maintaned in memory?  
 
 **Declarative/ Semantic Memory**: PostgreSQL with the pgvector extension allows the Obsidian vault files to become the apps semantic memory. Aside from raw vector embeddings and content, structured metadata (type, tags, title) exists at the chunk level but isn't yet used for anything beyond storage — no tag-based retrieval, no type filtering. Working memory object in local storage offers long term persistence of user information, topics, and goals collected accross conversations.
 
