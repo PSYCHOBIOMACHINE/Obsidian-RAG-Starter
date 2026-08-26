@@ -9,7 +9,7 @@ Obsidian-RAG Starter turns a personal Obsidian vault — markdown notes, canvas 
 
 This project was designed to operate at zero-cost using free-tier tools. This version is 'naïve' because it completes the most basic query-context retrieval operation. Modern RAG applications apply more sophisticated context engineering strategies.
 
-Future versions of this project will continue to sophisticate the working memory, long-term memory, ingestion and retrieval strategies. They will also aim to implement multimedia document ingesting, web search, and add simple agentic capabilities for UI manipulation--hoping to create an agentic tool that supports apps that are functionally more than just a chat app.
+Future versions of this project will continue to sophisticate the working memory, long-term memory, ingestion and retrieval strategies. They will also aim to implement multimedia document ingesting, web search, and add simple agentic capabilities for UI manipulation—hoping to create an agentic tool that supports apps that are functionally more than just a chat app.
 
 Note: The RAG portions are commented out at this time. The embedding model being used is deprecated and I need to select the next one with the same dimensions and that has an available tokenizer. Aside from the model, the retrieval process silently fails in production so context never gets retrieved for a deployed app.
 
@@ -18,14 +18,14 @@ Note: The RAG portions are commented out at this time. The embedding model being
 2. Supabase PostgreSQL + pgvector (Relational DB with Vector Embeddings)
 3. NVIDIA/nemotron-3-ultra-550b-a55 (Open-AI compatable inference API; Main inference)
 4. NVIDIA/nemotron-3.5-lightning-30b-a3b (Working memory updating background inference)
-5. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model) -- deprecated, use something else 2048 dimensions; must re-ingest
-6. @Huggingface/transformers (tokenizer for the embedding model) -- currently uses a tokenizer for the deprecated nemotron-embed-1b-v2 but may contain a tokenizer for the next chosen embedding model.
+5. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model) — deprecated, use something else 2048 dimensions; must re-ingest
+6. @Huggingface/transformers (tokenizer for the embedding model) — currently uses a tokenizer for the deprecated nemotron-embed-1b-v2 but may contain a tokenizer for the next chosen embedding model.
 
 ## Models
 ### Main Inference — NVIDIA/nemotron-3-ultra-550b-a55 (NVIDIA NIM) 
 Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens) 
 Free API key: [NVIDIA/nemotron-3-ultra-550b-a55](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b)
-### Background Inference - NVIDIA/nemotron-3.5-lightning-30b-a3b (NVIDIA NIM)
+### Background Inference — NVIDIA/nemotron-3.5-lightning-30b-a3b (NVIDIA NIM)
 Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens)
 Free API key: [NVIDIA/nemotron-3.5-lightning-30b-a3b](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)
 ### Embedding — nvidia/llama-nemotron-embed-1b-v2 (NVIDIA NIM)
