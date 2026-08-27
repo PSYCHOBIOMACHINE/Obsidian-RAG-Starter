@@ -21,6 +21,8 @@ Note: The RAG portions are commented out at this time. The embedding model being
 5. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model) — deprecated, use something else 2048 dimensions; must re-ingest
 6. @Huggingface/transformers (tokenizer for the embedding model) — currently uses a tokenizer for the deprecated nemotron-embed-1b-v2 but may contain a tokenizer for the next chosen embedding model.
 
+![Screenshot of UI and local storage](docs/images/rag_wm_md_progress_8-27-2026.png)
+
 ## Models
 ### Main Inference — NVIDIA/nemotron-3-ultra-550b-a55 (NVIDIA NIM) 
 Uses the OpenAI-compatible chat completions format, so swapping to any other OpenAI-compatible endpoint is a matter of changing the model string, base URL, some explicitly given features in the model card, and API key in `route.ts` — no other code changes needed. (Max: 1M input tokens | 16K output tokens) 
