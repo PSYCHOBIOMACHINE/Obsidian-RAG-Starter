@@ -13,6 +13,8 @@ Future versions of this project will continue to sophisticate the working memory
 
 Note: The RAG portions are commented out at this time. The embedding model being used is deprecated and I need to select the next one with the same dimensions and that has an available tokenizer. Aside from the model, the retrieval process silently fails in production so context never gets retrieved for a deployed app.
 
+![Screenshot of UI and local storage](docs/images/rag_wm_md_progress_8-27-2026.png)
+
 ## Stack/Technologies
 1. Next.js (interface/full-stack framework)
 2. Supabase PostgreSQL + pgvector (Relational DB with Vector Embeddings)
@@ -20,8 +22,6 @@ Note: The RAG portions are commented out at this time. The embedding model being
 4. NVIDIA/nemotron-3.5-lightning-30b-a3b (Working memory updating background inference)
 5. NVIDIA NIM/llama-nemotron-embed-1b-v2 (Embedding model) — deprecated, use something else 2048 dimensions; must re-ingest
 6. @Huggingface/transformers (tokenizer for the embedding model) — currently uses a tokenizer for the deprecated nemotron-embed-1b-v2 but may contain a tokenizer for the next chosen embedding model.
-
-![Screenshot of UI and local storage](docs/images/rag_wm_md_progress_8-27-2026.png)
 
 ## Models
 ### Main Inference — NVIDIA/nemotron-3-ultra-550b-a55 (NVIDIA NIM) 
