@@ -4,6 +4,7 @@ import ContextV1A from "@/lib/contextv1a";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown"
 import { useWorkingMemoryStore } from "@/lib/zustand/workingMemoryStore";
+import remarkGfm from "remark-gfm";
 
 // Each message in the conversation has a role and text content
 export type Message = {
@@ -69,7 +70,11 @@ export default function EPFCChat() {
         {messages.map((msg, i) => (
           <div key={i} style={{ marginBottom: "0.75rem" }}>
             <strong>{msg.role === "user" ? "You" : "Assistant"}:</strong>{" "}
-            <ReactMarkdown>{msg.content}</ReactMarkdown>
+            <div className="prose dark:prose-invert max-w-none">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {msg.content}
+              </ReactMarkdown>
+            </div>
           </div>
         ))}
         {loading && <div>Thinking…</div>}

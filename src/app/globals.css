@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -22,5 +23,49 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: verdana, Helvetica, sans-serif;
+  font-size: 0.9375rem; /* ~15px - balances Verdana's large default sizing */
+  letter-spacing: -0.02em; /* brings individual characters closer together */
+  line-height: 1.4; /* reduces vertical gap between lines */
+}
+
+@layer utilities {
+
+  .prose title,
+  .prose h1, 
+  .prose h2, 
+  .prose h3, 
+  .prose h4 {
+    margin-top: 1rem;    /* Reduced top gap between sections */
+    margin-bottom: 0rem;   /* Brings immediate body text closer */
+  }
+  /* Tighten list item spacing globally inside prose */
+  .prose ul > li {
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Style table borders and cell padding */
+  .prose table {
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+  
+  .prose th, .prose td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--tw-prose-borders);
+  }
+
+  .prose {
+    letter-spacing: -0.019em;
+    line-height: 1.5;
+  }
+  
+  .prose p, .prose li {
+    margin-top: 0.35em;
+    margin-bottom: 0.35em;
+  }
 }
