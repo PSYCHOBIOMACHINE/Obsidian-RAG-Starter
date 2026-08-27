@@ -5,7 +5,7 @@
 
 ![Designing RAG Pipeline](docs/images/ragprojectbanner.jpg)
 
-Obsidian-RAG Starter turns a personal Obsidian vault — markdown notes, canvas boards, and PDFs — into a queryable knowledge base. It walks the vault and collects eligible file paths, parses and chunks vault content, embeds the chunks via a remote embedding model, and stores chunks and vectors in Supabase for semantic retrieval. A background process automatically collects and updates user information, goals and topics, persists them in local storage, and injects them into the main system prompt as additional context.
+Obsidian-RAG Starter turns a personal Obsidian vault — markdown notes, canvas boards, and PDFs — into a queryable knowledge base. It walks the vault and collects eligible file paths, parses and chunks vault content, embeds the chunks via a remote embedding model, and stores chunks and vectors in Supabase for semantic retrieval. During main inference, a background process automatically collects and updates user information, goals and topics, persists them in local storage, and injects them into the main system prompt as additional context.
 
 This project was designed to operate at zero-cost using free-tier tools and models. However, model API's can be easily switched out for frontier or paid options.
 
