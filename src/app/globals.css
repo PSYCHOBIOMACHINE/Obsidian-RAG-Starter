@@ -31,13 +31,19 @@ body {
 
 @layer utilities {
 
+  .prose hr {
+    margin-top: 2.5rem;       /* Default was ~3rem (48px) */
+    margin-bottom: 2rem;    /* Default was ~3rem (48px) */
+    border-color: var(--tw-prose-hr); /* Keeps default line color */
+  }
+
   .prose title,
-  .prose h1, 
+  .prose h1,
   .prose h2, 
   .prose h3, 
   .prose h4 {
     margin-top: 1rem;    /* Reduced top gap between sections */
-    margin-bottom: 0rem;   /* Brings immediate body text closer */
+    margin-bottom: 1rem;   /* Brings immediate body text closer */
   }
   /* Tighten list item spacing globally inside prose */
   .prose ul > li {
@@ -54,8 +60,9 @@ body {
     overflow-x: auto;
   }
   
+  
   .prose th, .prose td {
-    padding: 0.5rem 0.75rem;
+    padding: .7rem 0.75rem;
     border: 1px solid var(--tw-prose-borders);
   }
 
