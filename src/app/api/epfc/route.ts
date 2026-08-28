@@ -4,12 +4,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 // --- NVIDIA NIM ---
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-
+const MODEL_ID = "deepseek-ai/deepseek-v4-pro-0813";
+        //"nvidia/nemotron-3-ultra-550b-a55b"
+const API_KEY = process.env.DEEPSEEK_V4_PRO!;
 // previous model: "meta/llama-3.1-70b-instruct"
 
 // REMEMBER TO RESET THE CONTEXT VARIABLE. COMMENTED IT OUT FOR TESTING
 // IN CONTEXTV1A TOO, UNCOMMENT THE CONSOLE LOG IF NEEDED
 // test prompt: `"Keep responses to 3-5 sentences unless the user explicitly asks for more detail. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine. Finish every response with \n'REMEMBER TO UPDATE THE SYSTEM PROMPT FOR A PERSONALIZED CHAT EXPERIENCE; '", if applicable, use the following context in your response${context}, where applicable use the following working memory properties in your response: userInfo: ${JSON.stringify(userInfo.age)}, goals: ${JSON.stringify(goals)}, topics: ${JSON.stringify(topics)}. lastly, return ${JSON.stringify(userInfo)}, ${JSON.stringify(goals)}, ${JSON.stringify(topics)} verbatim in your response on a new line"`
+// --- MISTRAL ---
+const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions'
+const MISTRAL_MODEL_ID = "mistral-large-latest"
+const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY!
 
 
 export async function POST(req: NextRequest) {
@@ -40,18 +46,15 @@ export async function POST(req: NextRequest) {
         //`use this retrieved context to answer the query: ${chunkContent}, and in your response include "I DEFINITELY RECEIVED THE RETRIEVED CONTEXT for: ${userMessage}" at the end of the response."`;
         console.log(`\n\n THIS IS CONTEXT \n\n ${context}`)
 
-        const MODEL_ID = "deepseek-ai/deepseek-v4-pro-0813";
-        //"nvidia/nemotron-3-ultra-550b-a55b"
-        const API_KEY = process.env.DEEPSEEK_V4_PRO!;
 
-        const response = await fetch(NVIDIA_API_URL, {
+        const response = await fetch(MISTRAL_API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${API_KEY}`,
+                "Authorization": `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-                model: MODEL_ID,
+                model: MISTRAL_MODEL_ID,
                 messages: [
                     {
                         role: "system",
@@ -74,14 +77,10 @@ export async function POST(req: NextRequest) {
                         7. User queries can sometimes be vague, such as in mid-conversation if a user query asks to elaborate on a previous assistant response. This happens because the user expects the LLM to keep track of the conversation. When this happens, consider looking at previous messages to infer the true question being asked (starting with the next most recent message and so on). To add, it is important to consider the goals and topics, which are organized by recency, as a way to determine what content is relevant to a query and what question is truly being asked.
                         `, 
                     },
-                    ...messages, // already in { role, content } format — no translation needed
+                    ...messages, // already in { role, content } format — no translation needed // ...mesages.slice(-4)
                 ],
                 max_tokens: 6384,
                 temperature: 0.7,
-                top_p: 0.95,
-                chat_template_kwargs: {"enable_thinking":true},
-                seed:42,
-                stream: false
             }),
         });
 
@@ -89,7 +88,7 @@ export async function POST(req: NextRequest) {
 
         // Guard: surface NVIDIA errors cleanly
         if (!response.ok) {
-            console.error("NVIDIA error:", data);
+            console.error("MISTRAL error:", data);
             return NextResponse.json({ error: "Model call failed" }, { status: 500 });
         }
 
@@ -102,3 +101,21 @@ export async function POST(req: NextRequest) {
     }
 }
 
+/*response_format: {
+  type: "json_schema",
+  json_schema: {
+    name: "working_memory_delta",
+    strict: true,
+    schema: {
+      type: "object",
+      properties: {
+        userInfo: { type: "object", additionalProperties: { type: "string" } },
+        addGoals: { type: "array", items: { type: "string" } },
+        addTopics: { type: "array", items: { type: "string" } },
+        reinforceGoals: { type: "array", items: { type: "string" } },
+        reinforceTopics: { type: "array", items: { type: "string" } }
+      },
+      additionalProperties: false
+    }
+  }
+}*/

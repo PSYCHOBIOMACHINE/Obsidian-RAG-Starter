@@ -55,10 +55,10 @@ export default function EPFCChat() {
       content: data.reply ?? "Something went wrong.",
     };
     const finalMessages = [...messagesWithUser, assistantMessage];
+    findMemoryDelta(messagesWithUser) // runs llm call, updates working memory store
     setMessages(finalMessages);
     setLoading(false);
 
-    findMemoryDelta(finalMessages) // runs llm call, updates working memory store
   }
 
   return (
