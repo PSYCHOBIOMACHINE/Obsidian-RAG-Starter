@@ -114,7 +114,6 @@ export async function POST(req: NextRequest) {
                 max_tokens: 4000, // account for reasoning budget
                 top_p: 0.95, //recommended on model card
                 temperature: 1, //recommended on model card
-                reasoning_budget: 3000, //this comes out of max token budget
                 chat_template_kwargs: {"enable_thinking":true},
                 stream: false,
             }),
