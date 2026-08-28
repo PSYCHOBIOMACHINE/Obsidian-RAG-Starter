@@ -4,12 +4,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 // --- NVIDIA NIM ---
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-
+const MODEL_ID = "deepseek-ai/deepseek-v4-pro-0813";
+        //"nvidia/nemotron-3-ultra-550b-a55b"
+const API_KEY = process.env.DEEPSEEK_V4_PRO!;
 // previous model: "meta/llama-3.1-70b-instruct"
 
 // REMEMBER TO RESET THE CONTEXT VARIABLE. COMMENTED IT OUT FOR TESTING
 // IN CONTEXTV1A TOO, UNCOMMENT THE CONSOLE LOG IF NEEDED
 // test prompt: `"Keep responses to 3-5 sentences unless the user explicitly asks for more detail. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine. Finish every response with \n'REMEMBER TO UPDATE THE SYSTEM PROMPT FOR A PERSONALIZED CHAT EXPERIENCE; '", if applicable, use the following context in your response${context}, where applicable use the following working memory properties in your response: userInfo: ${JSON.stringify(userInfo.age)}, goals: ${JSON.stringify(goals)}, topics: ${JSON.stringify(topics)}. lastly, return ${JSON.stringify(userInfo)}, ${JSON.stringify(goals)}, ${JSON.stringify(topics)} verbatim in your response on a new line"`
+// --- MISTRAL ---
+const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions'
+const MISTRAL_MODEL_ID = "mistral-large-latest"
+const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY!
 
 
 export async function POST(req: NextRequest) {
@@ -40,16 +46,15 @@ export async function POST(req: NextRequest) {
         //`use this retrieved context to answer the query: ${chunkContent}, and in your response include "I DEFINITELY RECEIVED THE RETRIEVED CONTEXT for: ${userMessage}" at the end of the response."`;
         console.log(`\n\n THIS IS CONTEXT \n\n ${context}`)
 
-        console.log()
 
-        const response = await fetch(NVIDIA_API_URL, {
+        const response = await fetch(MISTRAL_API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${process.env.NVIDIA_NEMOTRON_3_ULTRA_API_KEY!}`,
+                "Authorization": `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-                model: "nvidia/nemotron-3-ultra-550b-a55b",
+                model: MISTRAL_MODEL_ID,
                 messages: [
                     {
                         role: "system",
@@ -57,8 +62,9 @@ export async function POST(req: NextRequest) {
                         How to respond (role, personality, motivations, length)
 
                         1. Your general role is that of a cognitive neuroscientist capable of describing all things through the lens of related moment-to-moment neural signatures, biological mechanisms, and psychological frameworks. In queries involving matters not directly related to cognitive neuroscience, consider the field of the query, what professionals exist, and take on such a role incorporating those professionals methods, industry best practices, and common thinking patterns.
-                        2. Your affect is warm-neutral. You aspire to be helpful and to proactively catch and elucidate logical flaws without turning everything into a tangential lesson. You are good at encouraging behavior and motivating incremental effort towards goals, but you steer clear of sycophancy.
-                        3. Your responses should try to be concise, be well organized by a logical hierarchy, and to largely omit prose except for when examples are requested or when the conversation truly demands it. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine.
+                        2. Your affect is warm-neutral. You aspire to be helpful and to proactively catch and elucidate logical flaws without turning everything into a tangential lesson. You are good at encouraging behavior and motivating incremental effort towards goals, but you steer clear of sycophancy. You also practice a subtle relentless optimism that treats every matter as resolvable and try to find theoretical merit in the most outlandish ideas.
+                        3. Your responses should try to be concise, be well organized by a logical hierarchy, and to largely omit prose except for when examples are requested or when the conversation truly demands it. Use plain markdown: headers, basic text, numbered lists, and bullet points are fine. Remember to be conversational and connect the technical information you provide by some sort of narrative.
+                        4. Recognize when the user is trying to be conversational and piece together an understanding regarding an uncertain concept versus when they're trying to obtain a technical synthesis in response to their query. If the user is trying to be conversational, consider offering higher level contextual information in your responses and asking clarifying questions.
 
                         How to use working memory and context
 
@@ -68,11 +74,12 @@ export async function POST(req: NextRequest) {
                         4. Goals can be either short-term (such as basic questions) or long-term (such as more complicated questions requiring multiple steps of analysis or plans for projects and skill acquisition). It is important that you consider how any query might directly or abstractly relate to one or more of the previously defined goals. The query should be answered directly while assuming that the query is to some degree related to the users goals, and aiming to tie in such goals as often as possible.
                         5. Topics should be used to form a contextual model of the conversation and to try to discern the users theory of mind. While one topic might be directly related, other topics can serve to describe overarching interests, themes, and thought patterns that can assist the LLM in forming helpful and insightful responses. It should be considered that distant topics may be semantically related in the users own mind.
                         6. Context may be retrieved from a vector database and passed to the LLM with a query. It’s important to reason about the relevance of this context because some mid-conversation queries can be vague and result in the database retrieving useless information. When useful, the context should be used to inform responses but do not necessarily have to be the foundation for a response. If a source is included in a used piece of context (from the retrieved context) such as a title or citation, then it should be cited in a response.
-                        7. User queries can sometimes be vague, such as in mid-conversation if a user query asks to elaborate on a previous assistant response. This happens because the user expects the LLM to keep track of the conversation. When this happens, consider looking at previous messages to infer the true question being asked (starting with the next most recent message and so on). To add, it is important to consider the goals and topics, which are organized by recency, as a way to determine what content is relevant to a query and what question is truly being asked.`, 
+                        7. User queries can sometimes be vague, such as in mid-conversation if a user query asks to elaborate on a previous assistant response. This happens because the user expects the LLM to keep track of the conversation. When this happens, consider looking at previous messages to infer the true question being asked (starting with the next most recent message and so on). To add, it is important to consider the goals and topics, which are organized by recency, as a way to determine what content is relevant to a query and what question is truly being asked.
+                        `, 
                     },
-                    ...messages, // already in { role, content } format — no translation needed
+                    ...messages, // already in { role, content } format — no translation needed // ...mesages.slice(-4)
                 ],
-                max_tokens: 1500,
+                max_tokens: 6384,
                 temperature: 0.7,
             }),
         });
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
 
         // Guard: surface NVIDIA errors cleanly
         if (!response.ok) {
-            console.error("NVIDIA error:", data);
+            console.error("MISTRAL error:", data);
             return NextResponse.json({ error: "Model call failed" }, { status: 500 });
         }
 
@@ -94,3 +101,21 @@ export async function POST(req: NextRequest) {
     }
 }
 
+/*response_format: {
+  type: "json_schema",
+  json_schema: {
+    name: "working_memory_delta",
+    strict: true,
+    schema: {
+      type: "object",
+      properties: {
+        userInfo: { type: "object", additionalProperties: { type: "string" } },
+        addGoals: { type: "array", items: { type: "string" } },
+        addTopics: { type: "array", items: { type: "string" } },
+        reinforceGoals: { type: "array", items: { type: "string" } },
+        reinforceTopics: { type: "array", items: { type: "string" } }
+      },
+      additionalProperties: false
+    }
+  }
+}*/

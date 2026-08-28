@@ -9,6 +9,11 @@ const API_KEY = process.env.NVIDIA_LIGHTNING_API_KEY!; // Ensure this is set in 
 //previously tried: "nvidia/nemotron-3.5-lightning-30b-a3b" 
 // "meta/llama-3.1-8b-instruct"
 
+// --- MISTRAL ---
+
+const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions'
+const MISTRAL_MODEL_ID = "mistral-large-latest"
+const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY!
 // import working memory store
 
 export async function POST(req: NextRequest) {
@@ -56,14 +61,14 @@ export async function POST(req: NextRequest) {
         ;
    
 
-        const response = await fetch(NVIDIA_API_URL, {
+        const response = await fetch(MISTRAL_API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${API_KEY}`,
+                "Authorization": `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-                model: `${MODEL_ID}`,
+                model: `${MISTRAL_MODEL_ID}`,
                 messages: [
                     {
                         role: "system",
@@ -107,20 +112,16 @@ export async function POST(req: NextRequest) {
                         - Return ONLY a raw JSON object. No markdown, no headers, no bullet points, no explanation text, no code fences. Your entire response must start with { and end with }.`,
                         //instructions for the model to follow, including the non-negotiable structure of the return statement
                     },
-                    ...messages, // already in { role, content } format — no translation needed
+                    ...messages // already in { role, content } format — no translation needed
                     // maybe dont include all of the messages. even one long assistant message breaks the model sometimes
                 ],
-                //nvext: { guided_json: workingMemoryDeltaSchema}, // sits alongside model/messages, no wrapper needed
-                max_tokens: 4000, // account for reasoning budget
-                top_p: 0.95, //recommended on model card
-                temperature: 1, //recommended on model card
-                reasoning_budget: 3000, //this comes out of max token budget
-                chat_template_kwargs: {"enable_thinking":true},
-                stream: false,
+                response_format: { type: "json_object" }, // Strictly enforces standard JSON output
+                max_tokens: 1096, 
+                temperature: 0.1,
             }),
         });
         const rawText = await response.text();
-        console.log("RAW NVIDIA RESPONSE:", rawText);
+        console.log("RAW MISTRAL RESPONSE:", rawText);
 
         let data;
         try {
